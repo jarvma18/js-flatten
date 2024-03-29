@@ -1,0 +1,20 @@
+{
+  "name": "js-flatten",
+  "version": "1.0.0",
+  "description": "Flatten nested json data",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "JSON",
+    "nested",
+    "JSON",
+    "flatten"
+  ],
+  "author": "Markus Järvinen",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
