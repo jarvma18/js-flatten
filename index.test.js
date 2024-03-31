@@ -42,32 +42,74 @@ const firstCaseNestedJSON = {
       make: 'Tesla',
       model: 'Model 3',
       year: 2023,
-      'features': {
-        'interior': ['premium sound system', 'autopilot'],
-        'exterior': {
-          'color': 'white',
-          'wheels': 'aero',
-          'lights': ['LED headlights', 'taillights']
+      features: {
+        interior: ['premium sound system', 'autopilot'],
+        exterior: {
+          color: 'white',
+          wheels: 'aero',
+          lights: ['LED headlights', 'taillights']
         }
       },
-      'engine': {
-        'type': 'electric',
-        'horsepower': 450,
-        'fuel': 'electricity'
+      engine: {
+        type: 'electric',
+        horsepower: 450,
+        fuel: 'electricity'
       },
-      'owners': [
+      owners: [
         {
-          'name': 'Charlie',
-          'age': 28,
-          'address': {
-            'street': '789 Electric Dr',
-            'city': 'Eco Town',
-            'zip': '12345'
+          name: 'Charlie',
+          age: 28,
+          address: {
+            street: '789 Electric Dr',
+            city: 'Eco Town',
+            zip: '12345'
           }
         }
       ]
     }
   ]
+};
+
+const flattenedFirstCaseJSON = {
+  "cars[0].make": "Toyota",
+  "cars[0].model": "Camry",
+  "cars[0].year": 2022,
+  "cars[0].features.interior[0]": "leather seats",
+  "cars[0].features.interior[1]": "touchscreen infotainment",
+  "cars[0].features.exterior.color": "blue",
+  "cars[0].features.exterior.wheels": "alloy",
+  "cars[0].features.exterior.lights[0]": "LED headlights",
+  "cars[0].features.exterior.lights[1]": "fog lights",
+  "cars[0].engine.type": "V6",
+  "cars[0].engine.horsepower": 301,
+  "cars[0].engine.fuel": "gasoline",
+  "cars[0].owners[0].name": "Alice",
+  "cars[0].owners[0].age": 35,
+  "cars[0].owners[0].address.street": "123 Main St",
+  "cars[0].owners[0].address.city": "Carville",
+  "cars[0].owners[0].address.zip": "98765",
+  "cars[0].owners[1].name": "Bob",
+  "cars[0].owners[1].age": 42,
+  "cars[0].owners[1].address.street": "456 Elm Ave",
+  "cars[0].owners[1].address.city": "Auto City",
+  "cars[0].owners[1].address.zip": "54321",
+  "cars[1].make": "Tesla",
+  "cars[1].model": "Model 3",
+  "cars[1].year": 2023,
+  "cars[1].features.interior[0]": "premium sound system",
+  "cars[1].features.interior[1]": "autopilot",
+  "cars[1].features.exterior.color": "white",
+  "cars[1].features.exterior.wheels": "aero",
+  "cars[1].features.exterior.lights[0]": "LED headlights",
+  "cars[1].features.exterior.lights[1]": "taillights",
+  "cars[1].engine.type": "electric",
+  "cars[1].engine.horsepower": 450,
+  "cars[1].engine.fuel": "electricity",
+  "cars[1].owners[0].name": "Charlie",
+  "cars[1].owners[0].age": 28,
+  "cars[1].owners[0].address.street": "789 Electric Dr",
+  "cars[1].owners[0].address.city": "Eco Town",
+  "cars[1].owners[0].address.zip": "12345"
 };
 
 const secondCaseNestedJSON = {
@@ -107,6 +149,31 @@ const secondCaseNestedJSON = {
       }
     }
   ]
+};
+
+const flattenedSecondCaseJSON = {
+  "make": "Toyota",
+  "model": "Camry",
+  "year": 2022,
+  "features.interior[0]": "leather seats",
+  "features.interior[1]": "touchscreen infotainment",
+  "features.exterior.color": "blue",
+  "features.exterior.wheels": "alloy",
+  "features.exterior.lights[0]": "LED headlights",
+  "features.exterior.lights[1]": "fog lights",
+  "engine.type": "V6",
+  "engine.horsepower": 301,
+  "engine.fuel": "gasoline",
+  "owners[0].name": "Alice",
+  "owners[0].age": 35,
+  "owners[0].address.street": "123 Main St",
+  "owners[0].address.city": "Carville",
+  "owners[0].address.zip": "98765",
+  "owners[1].name": "Bob",
+  "owners[1].age": 42,
+  "owners[1].address.street": "456 Elm Ave",
+  "owners[1].address.city": "Auto City",
+  "owners[1].address.zip": "54321"
 };
 
 const thirdCaseNestedJSON = {
@@ -211,14 +278,162 @@ const thirdCaseNestedJSON = {
   ]
 };
 
-test('flatten firstCaseNestedJson', () => {
+const flattenedThirdCaseJSON = {
+  "company.name": "Test company",
+  "company.code": "XX101023124",
+  "company.seniorLeaderShip.ceo": "John",
+  "company.seniorLeaderShip.cto": "Camille",
+  "company.seniorLeaderShip.cfo": "Rick",
+  "company.seniorLeaderShip.clo": "Andy",
+  "company.seniorLeaderShip.vpe": "Eric",
+  "company.seniorLeaderShip.vp": "Kim",
+  "company.employees[0]": "John",
+  "company.employees[1]": "Smith",
+  "company.employees[2]": "Sahr",
+  "company.employees[3]": "Otto",
+  "company.employees[4]": "James",
+  "company.employees[5]": "Johnny",
+  "company.employees[6]": "Jane",
+  "company.sites[0].name": "Lahti site",
+  "company.sites[0].city": "Lahti",
+  "company.sites[0].code": "001",
+  "company.sites[1].name": "Helsinki site",
+  "company.sites[1].city": "Helsinki",
+  "company.sites[1].code": "002",
+  "company.sites[2].name": "Stockholm site",
+  "company.sites[2].city": "Stockholm",
+  "company.sites[2].code": "003",
+  "cars[0].make": "Toyota",
+  "cars[0].model": "Camry",
+  "cars[0].year": 2022,
+  "cars[0].features.interior[0]": "leather seats",
+  "cars[0].features.interior[1]": "touchscreen infotainment",
+  "cars[0].features.exterior.color": "blue",
+  "cars[0].features.exterior.wheels": "alloy",
+  "cars[0].features.exterior.lights[0]": "LED headlights",
+  "cars[0].features.exterior.lights[1]": "fog lights",
+  "cars[0].engine.type": "V6",
+  "cars[0].engine.horsepower": 301,
+  "cars[0].engine.fuel": "gasoline",
+  "cars[0].owners[0].name": "Alice",
+  "cars[0].owners[0].age": 35,
+  "cars[0].owners[0].address.street": "123 Main St",
+  "cars[0].owners[0].address.city": "Carville",
+  "cars[0].owners[0].address.zip": "98765",
+  "cars[0].owners[1].name": "Bob",
+  "cars[0].owners[1].age": 42,
+  "cars[0].owners[1].address.street": "456 Elm Ave",
+  "cars[0].owners[1].address.city": "Auto City",
+  "cars[0].owners[1].address.zip": "54321",
+  "cars[1].make": "Tesla",
+  "cars[1].model": "Model 3",
+  "cars[1].year": 2023,
+  "cars[1].features.interior[0]": "premium sound system",
+  "cars[1].features.interior[1]": "autopilot",
+  "cars[1].features.exterior.color": "white",
+  "cars[1].features.exterior.wheels": "aero",
+  "cars[1].features.exterior.lights[0]": "LED headlights",
+  "cars[1].features.exterior.lights[1]": "taillights",
+  "cars[1].engine.type": "electric",
+  "cars[1].engine.horsepower": 450,
+  "cars[1].engine.fuel": "electricity",
+  "cars[1].owners[0].name": "Charlie",
+  "cars[1].owners[0].age": 28,
+  "cars[1].owners[0].address.street": "789 Electric Dr",
+  "cars[1].owners[0].address.city": "Eco Town",
+  "cars[1].owners[0].address.zip": "12345"
+};
 
+test('check that right keys are returned at current json level', () => {
+  const value = {
+    testKey: '123',
+    array: [1, 2, 3],
+    number: 1,
+    string: 'string'
+  };
+  const result = getCurrentJSONkeys(value);
+  expect(result).toBe(['testKey', 'array', 'number', 'string']);
+
+test('check that right keys are returned at current json level case 1', () => {
+  const value = firstCaseNestedJSON;
+  const result = getCurrentJSONkeys(value);
+  expect(result).toBe(['cars']);
+});
+
+test('check that right keys are returned at current json level case 2', () => {
+  const value = secondCaseNestedJSON;
+  const result = getCurrentJSONkeys(value);
+  expect(result).toBe(['make', 'model', 'year', 'features', 'engine', 'owners']);
+});
+
+test('check that right keys are returned at current json level case 3', () => {
+  const value = thirdCaseNestedJSON;
+  const result = getCurrentJSONkeys(value);
+  expect(result).toBe(['company', 'cars']);
+});
+
+test('check that typeof works for simple array', () => {
+  const value = [1, 2, 3];
+  const result = checkVariableType(value);
+  expect(result).toBe('array');
+});
+
+test('check that typeof works for complex array', () => {
+  const value = firstCaseNestedJSON.cars;
+  const result = checkVariableType(value);
+  expect(result).toBe('array');
+});
+
+test('check that typeof works for simple json', () => {
+  const value = { testKey: 123 };
+  const result = checkVariableType(value);
+  expect(result).toBe('json');
+});
+
+test('check that typeof works for complex json case 1', () => {
+  const value = firstCaseNestedJSON;
+  const result = checkVariableType(value);
+  expect(result).toBe('json');
+});
+
+test('check that typeof works for complex json case 2', () => {
+  const value = secondCaseNestedJSON;
+  const result = checkVariableType(value);
+  expect(result).toBe('json');
+});
+
+test('check that typeof works for complex json case 3', () => {
+  const value = thirdCaseNestedJSON;
+  const result = checkVariableType(value);
+  expect(result).toBe('json');
+});
+
+test('check that typeof does not return json or array for other values', () => {
+  const value = 1;
+  const result = checkVariableType(value);
+  expect(result).toBe('number');
+});
+
+test('check that typeof does not return json or array for other values', () => {
+  const value = 'string';
+  const result = checkVariableType(value);
+  expect(result).toBe('string');
+});
+
+test('flatten firstCaseNestedJson', () => {
+  const value = firstCaseNestedJSON;
+  const result = flatten(value);
+  expect(result).toBe(flattenedFirstCaseJSON);
 });
 
 test('flatten secondCaseNestedJson', () => {
-
+  const value = secondBaseNestedJSON;
+  const result = flatten(value);
+  expect(result).toBe(flattenedSecondCaseJSON);
 });
 
 test('flatten thirdCaseNestedJson', () => {
-
+  const value = thirdCaseNestedJSON;
+  const result = flatten(value);
+  expect(result).toBe(flattenedThirdCaseJSON);
 });
