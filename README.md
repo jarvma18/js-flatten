@@ -8,6 +8,8 @@ Feature include:
 * Efficient and lightweight
 * Easy integration
 
+I practiced TDD with this small project.
+
 ## Prerun actions
 
 * Install Node.js
