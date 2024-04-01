@@ -31,34 +31,33 @@ function renameKeyForFlattenedValue(parentKey, currentKey) {
 
 function flatten(data, parentKey) {
   const keys = getCurrentJSONkeys(data);
+  let flattenedData = {};
   // return early if given argument is not a JSON object
   if (!keys) {
     return data;
   }
-  let flattenedData = {};
   for (const key of keys) {
     keyValue = data[key];
-    const typeofKey = checkVariableType(keyValue);
-    switch (typeofKey) {
-      case 'object':
-        const newKeyValue = flatten(keyValue, key);
-        flattenedData = { ...flattenedData, ...newKeyValue };
-        break;
-      case 'array':
+    const keyType = checkVariableType(keyValue);
+    if (keyType === 'object') {
+      const newName = renameKeyForFlattenedValue(parentKey, key);
+      const newKeyValue = flatten(keyValue, newName);
+      flattenedData = { ...flattenedData, ...newKeyValue };
+    }
+    else if (keyType === 'array') {
+      const parentCurrentKeyPair = renameKeyForFlattenedValue(parentKey, key);
+      for (let i = 0; i < keyValue.length; i++) {
         const newObject = {};
-        for (let j = 0; j < keyValue.length; j++) {
-          const parentCurrentKeyPair = renameKeyForFlattenedValue(parentKey, key);
-          const newName = '[' + j + ']';
-          const renamedKey = renameKeyForFlattenedValue(parentCurrentKeyPair, newName);
-          const newKeyValue = flatten(keyValue[j], renamedKey);
-          newObject[renamedKey] = newKeyValue;
-        }
+        const newName = '[' + i + ']';
+        let renamedKey = renameKeyForFlattenedValue(parentCurrentKeyPair, newName);
+        const newKeyValue = flatten(keyValue[i], renamedKey);
+        newObject[renamedKey] = newKeyValue;
         flattenedData = { ...flattenedData, ...newObject };
-        break;
-      default:
-        const renamedKey = renameKeyForFlattenedValue(parentKey, key);
-        flattenedData[renamedKey] = keyValue;
-        break;
+      }
+    }
+    else {
+      const renamedKey = renameKeyForFlattenedValue(parentKey, key);
+      flattenedData[renamedKey] = keyValue;
     }
   }
   return { ...flattenedData };
