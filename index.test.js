@@ -2,7 +2,8 @@ const {
   getCurrentJSONkeys,
   checkVariableType,
   renameKeyForFlattenedValue,
-  flatten
+  flatten,
+  arrayIndexRegexPattern
 } = require('./index');
 
 const firstCaseNestedJSON = {
@@ -454,8 +455,14 @@ test('check that typeof does not return json or array for other values', () => {
   expect(result).toBe('string');
 });
 
+test('check that typeof does not return json or array for other values', () => {
+  const value = '98765';
+  const result = checkVariableType(value);
+  expect(result).toBe('string');
+});
+
 /*
-Tests for flattening
+Tests for new flattened key
 */
 
 test('new key for flattened object case 1', () => {
@@ -471,6 +478,16 @@ test('new key for flattened object case 2', () => {
   const result = renameKeyForFlattenedValue(parentKey, currentKey);
   expect(result).toBe('parentKey[0]');
 });
+
+/*
+Tests for array index regex pattern
+*/
+
+test('get regex pattern for array index', () => {
+  const result = arrayIndexRegexPattern();
+  expect(result).toStrictEqual(/^\[\d+\]$/);
+});
+
 
 /*
 Tests for flattening
