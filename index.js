@@ -1,6 +1,4 @@
 function getCurrentJSONkeys(object) {
-  // return Object keys only when the passed object is really an object
-  // otherwise throw new Error
   if (typeof object === 'object' && !Array.isArray(object)) {
     return Object.keys(object);
   }
@@ -14,15 +12,15 @@ function checkVariableType(value) {
   return typeof value;
 }
 
+function arrayIndexRegexPattern() {
+  return new RegExp(/^\[\d+\]$/);
+}
+
 function renameKeyForFlattenedValue(parentKey, currentKey) {
-  // return just currentKey early if parentKey is null etc.
   if (!parentKey) {
     return currentKey;
   }
-  // using regex to check if the currentKey is [digit..]
-  const regex = /^\[\d+\]$/;
-  const result = currentKey.match(regex);
-  // return new name differently when current key is array index
+  const result = currentKey.match(arrayIndexRegexPattern());
   if (result) {
     return parentKey + currentKey;
   }
@@ -32,13 +30,14 @@ function renameKeyForFlattenedValue(parentKey, currentKey) {
 function flatten(data, parentKey) {
   const keys = getCurrentJSONkeys(data);
   let flattenedData = {};
-  // return early if given argument is not a JSON object
   if (!keys) {
+    console.log(parentKey, data)
     return data;
   }
   for (const key of keys) {
     keyValue = data[key];
     const keyType = checkVariableType(keyValue);
+    console.log(parentKey, keyValue, keyType)
     if (keyType === 'object') {
       const newName = renameKeyForFlattenedValue(parentKey, key);
       const newKeyValue = flatten(keyValue, newName);
@@ -46,10 +45,12 @@ function flatten(data, parentKey) {
     }
     else if (keyType === 'array') {
       const parentCurrentKeyPair = renameKeyForFlattenedValue(parentKey, key);
+      console.log(parentKey, keyType, keyValue)
       for (let i = 0; i < keyValue.length; i++) {
+        console.log(parentKey, i, keyValue, keyType);
         const newObject = {};
         const newName = '[' + i + ']';
-        let renamedKey = renameKeyForFlattenedValue(parentCurrentKeyPair, newName);
+        const renamedKey = renameKeyForFlattenedValue(parentCurrentKeyPair, newName);
         const newKeyValue = flatten(keyValue[i], renamedKey);
         newObject[renamedKey] = newKeyValue;
         flattenedData = { ...flattenedData, ...newObject };
@@ -58,6 +59,7 @@ function flatten(data, parentKey) {
     else {
       const renamedKey = renameKeyForFlattenedValue(parentKey, key);
       flattenedData[renamedKey] = keyValue;
+      console.log(parentKey, flattenedData)
     }
   }
   return { ...flattenedData };
@@ -67,5 +69,6 @@ module.exports = {
   getCurrentJSONkeys,
   checkVariableType,
   renameKeyForFlattenedValue,
-  flatten
+  flatten,
+  arrayIndexRegexPattern
 };
