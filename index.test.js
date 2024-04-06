@@ -397,8 +397,26 @@ test('check that null is returned at current json level with number', () => {
   expect(result).toStrictEqual(null);
 });
 
-test('check that error is returned at current json level with array', () => {
+test('check that null is returned at current json level with array', () => {
   const notAnObject = [1, 2, 3];
+  const result = getCurrentJSONkeys(notAnObject);
+  expect(result).toStrictEqual(null);
+});
+
+test('check that null is returned at current json level with undefined', () => {
+  const notAnObject = undefined;
+  const result = getCurrentJSONkeys(notAnObject);
+  expect(result).toStrictEqual(null);
+});
+
+test('check that null is returned at current json level with null', () => {
+  const notAnObject = null;
+  const result = getCurrentJSONkeys(notAnObject);
+  expect(result).toStrictEqual(null);
+});
+
+test('check that null is returned at current json level with 0', () => {
+  const notAnObject = 0;
   const result = getCurrentJSONkeys(notAnObject);
   expect(result).toStrictEqual(null);
 });

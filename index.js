@@ -1,4 +1,7 @@
 function getCurrentJSONkeys(object) {
+  if (!object) {
+    return null;
+  }
   if (typeof object === 'object' && !Array.isArray(object)) {
     return Object.keys(object);
   }
