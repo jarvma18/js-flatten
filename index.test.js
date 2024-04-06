@@ -496,18 +496,17 @@ Tests for flattening
 test('flatten firstCaseNestedJson', () => {
   const value = firstCaseNestedJSON;
   const result = flatten(value);
-  console.log(result);
-  // expect(result).toStrictEqual(flattenedFirstCaseJSON, null);
+  expect(result).toStrictEqual(flattenedFirstCaseJSON, null);
 });
 
-// test('flatten secondCaseNestedJson', () => {
-//   const value = secondCaseNestedJSON;
-//   const result = flatten(value);
-//   expect(result).toStrictEqual(flattenedSecondCaseJSON, null);
-// });
+test('flatten secondCaseNestedJson', () => {
+  const value = secondCaseNestedJSON;
+  const result = flatten(value);
+  expect(result).toStrictEqual(flattenedSecondCaseJSON, null);
+});
 
-// test('flatten thirdCaseNestedJson', () => {
-//   const value = thirdCaseNestedJSON;
-//   const result = flatten(value);
-//   expect(result).toStrictEqual(flattenedThirdCaseJSON, null);
-// });
+test('flatten thirdCaseNestedJson', () => {
+  const value = thirdCaseNestedJSON;
+  const result = flatten(value);
+  expect(result).toStrictEqual(flattenedThirdCaseJSON, null);
+});

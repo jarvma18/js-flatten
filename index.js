@@ -44,12 +44,16 @@ function flatten(data, parentKey) {
     else if (keyType === 'array') {
       const parentCurrentKeyPair = renameKeyForFlattenedValue(parentKey, key);
       for (let i = 0; i < keyValue.length; i++) {
-        const newObject = {};
         const newName = '[' + i + ']';
         const renamedKey = renameKeyForFlattenedValue(parentCurrentKeyPair, newName);
         const newKeyValue = flatten(keyValue[i], renamedKey);
-        newObject[renamedKey] = newKeyValue;
-        flattenedData = { ...flattenedData, ...newObject };
+        const newKeyValueType = checkVariableType(newKeyValue);
+        if (newKeyValueType === 'object') {
+          Object.assign(flattenedData, newKeyValue);
+        }
+        else {
+          flattenedData[renamedKey] = newKeyValue;
+        }
       }
     }
     else {
@@ -57,7 +61,7 @@ function flatten(data, parentKey) {
       flattenedData[renamedKey] = keyValue;
     }
   }
-  return { ...flattenedData };
+  return flattenedData;
 }
 
 module.exports = {
