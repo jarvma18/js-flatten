@@ -30,6 +30,19 @@ function renameKeyForFlattenedValue(parentKey, currentKey) {
   return parentKey + '.' + currentKey;
 }
 
+function assignOrAddValueToObject(value, typeofValue, object, keyToUseWithAdd) {
+  if (!keyToUseWithAdd && keyToUseWithAdd !== 0) {
+    keyToUseWithAdd = 'joker';
+  }
+  if (typeofValue === 'object') {
+    Object.assign(object, value);
+  }
+  else {
+    object[keyToUseWithAdd] = value;
+  }
+  return object;
+}
+
 function flatten(data, parentKey) {
   const keys = getCurrentJSONkeys(data);
   let flattenedData = {};
@@ -39,29 +52,22 @@ function flatten(data, parentKey) {
   for (const key of keys) {
     const keyValue = data[key];
     const keyType = checkVariableType(keyValue);
+    const parentKeyPlusCurrentKey = renameKeyForFlattenedValue(parentKey, key);
     if (keyType === 'object') {
-      const newName = renameKeyForFlattenedValue(parentKey, key);
-      const newKeyValue = flatten(keyValue, newName);
+      const newKeyValue = flatten(keyValue, parentKeyPlusCurrentKey);
       flattenedData = { ...flattenedData, ...newKeyValue };
     }
     else if (keyType === 'array') {
-      const parentCurrentKeyPair = renameKeyForFlattenedValue(parentKey, key);
       for (let i = 0; i < keyValue.length; i++) {
         const newName = '[' + i + ']';
-        const renamedKey = renameKeyForFlattenedValue(parentCurrentKeyPair, newName);
+        const renamedKey = renameKeyForFlattenedValue(parentKeyPlusCurrentKey, newName);
         const newKeyValue = flatten(keyValue[i], renamedKey);
         const newKeyValueType = checkVariableType(newKeyValue);
-        if (newKeyValueType === 'object') {
-          Object.assign(flattenedData, newKeyValue);
-        }
-        else {
-          flattenedData[renamedKey] = newKeyValue;
-        }
+        flattenedData = assignOrAddValueToObject(newKeyValue, newKeyValueType, flattenedData, renamedKey);
       }
     }
     else {
-      const renamedKey = renameKeyForFlattenedValue(parentKey, key);
-      flattenedData[renamedKey] = keyValue;
+      flattenedData[parentKeyPlusCurrentKey] = keyValue;
     }
   }
   return flattenedData;
@@ -72,5 +78,6 @@ module.exports = {
   checkVariableType,
   renameKeyForFlattenedValue,
   flatten,
-  arrayIndexRegexPattern
+  arrayIndexRegexPattern,
+  assignOrAddValueToObject
 };
