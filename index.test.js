@@ -3,7 +3,8 @@ const {
   checkVariableType,
   renameKeyForFlattenedValue,
   flatten,
-  arrayIndexRegexPattern
+  arrayIndexRegexPattern,
+  assignOrAddValueToObject
 } = require('./index');
 
 const firstCaseNestedJSON = {
@@ -506,6 +507,103 @@ test('get regex pattern for array index', () => {
   expect(result).toStrictEqual(/^\[\d+\]$/);
 });
 
+/*
+Tests for assigned in object or with new key with object index
+*/
+
+test('assign object to original object', () => {
+  const object = {
+    testKey: '123',
+    array: [1, 2, 3]
+  };
+  const value = {
+    number: 1,
+    string: 'string'
+  };
+  const objectShouldBe = {
+    testKey: '123',
+    array: [1, 2, 3],
+    number: 1,
+    string: 'string'
+  };
+  const typeofValue = 'object';
+  const result = assignOrAddValueToObject(value, typeofValue, object, null);
+  expect(result).toStrictEqual(objectShouldBe);
+});
+
+test('add number to original object', () => {
+  const object = {
+    testKey: '123',
+    array: [1, 2, 3]
+  };
+  const value = 1;
+  const objectShouldBe = {
+    testKey: '123',
+    array: [1, 2, 3],
+    number: 1
+  };
+  const typeofValue = 'number';
+  const result = assignOrAddValueToObject(value, typeofValue, object, 'number');
+  expect(result).toStrictEqual(objectShouldBe);
+});
+
+test('add string to original object', () => {
+  const object = {
+    testKey: '123',
+    array: [1, 2, 3]
+  };
+  const value = 'string';
+  const objectShouldBe = {
+    testKey: '123',
+    array: [1, 2, 3],
+    string: 'string'
+  };
+  const typeofValue = 'string';
+  const result = assignOrAddValueToObject(value, typeofValue, object, 'string');
+  expect(result).toStrictEqual(objectShouldBe);
+});
+
+test('add array to original object', () => {
+  const object = {
+    testKey: '123'
+  };
+  const value = [1, 2, 3];
+  const objectShouldBe = {
+    testKey: '123',
+    array: [1, 2, 3]
+  };
+  const typeofValue = 'array';
+  const result = assignOrAddValueToObject(value, typeofValue, object, 'array');
+  expect(result).toStrictEqual(objectShouldBe);
+});
+
+test('add array to original object with null keyToUseWith argument', () => {
+  const object = {
+    testKey: '123'
+  };
+  const value = [1, 2, 3];
+  const objectShouldBe = {
+    testKey: '123',
+    joker: [1, 2, 3]
+  };
+  const typeofValue = 'array';
+  const result = assignOrAddValueToObject(value, typeofValue, object);
+  expect(result).toStrictEqual(objectShouldBe);
+});
+
+test('add array to original object with 0 keyToUseWith argument', () => {
+  const object = {
+    testKey: '123'
+  };
+  const value = [1, 2, 3];
+  const objectShouldBe = {
+    testKey: '123',
+    0: [1, 2, 3]
+  };
+  const typeofValue = 'array';
+  const result = assignOrAddValueToObject(value, typeofValue, object, 0);
+  expect(result).toStrictEqual(objectShouldBe);
+});
 
 /*
 Tests for flattening
