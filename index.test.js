@@ -614,7 +614,41 @@ test('flat index of array where value is number', () => {
   const value = 1;
   const parentKeyPlusCurrentKey = 'object.array';
   const shouldBe = { "object.array[0]": 1 };
-  const result = flatIndexOfArray(index, value, parentKeyPlusCurrentKey, {});
+  const result = flatIndexOfArray(0, value, parentKeyPlusCurrentKey, {});
+  expect(result).toStrictEqual(shouldBe);
+});
+
+test('flat index of array where value is string', () => {
+  const value = "string";
+  const parentKeyPlusCurrentKey = 'object.array';
+  const shouldBe = { "object.array[0]": "string" };
+  const result = flatIndexOfArray(0, value, parentKeyPlusCurrentKey, {});
+  expect(result).toStrictEqual(shouldBe);
+});
+
+test('flat index of array where value is array', () => {
+  const value = [1, 2, 3];
+  const parentKeyPlusCurrentKey = 'object.array';
+  const shouldBe = { "object.array[0]": [1, 2, 3] };
+  const result = flatIndexOfArray(0, value, parentKeyPlusCurrentKey, {});
+  expect(result).toStrictEqual(shouldBe);
+});
+
+test('flat index of array where value is object', () => {
+  const value = {
+    array: [1, 2, 3],
+    number: 1,
+    string: 'string'
+  };
+  const parentKeyPlusCurrentKey = 'object.array';
+  const shouldBe = {
+    "object.array[0].array[0]": 1,
+    "object.array[0].array[1]": 2,
+    "object.array[0].array[2]": 3,
+    "object.array[0].number": 1,
+    "object.array[0].string": 'string'
+  };
+  const result = flatIndexOfArray(0, value, parentKeyPlusCurrentKey, {});
   expect(result).toStrictEqual(shouldBe);
 });
 
