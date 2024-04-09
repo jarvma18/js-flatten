@@ -43,34 +43,38 @@ function assignOrAddValueToObject(value, typeofValue, object, keyToUseWithAdd) {
   return object;
 }
 
+function flatIndexOfArray(index, value, parentKeyPlusCurrentKey, flattenedData){
+  const newName = '[' + index + ']';
+  const renamedKey = renameKeyForFlattenedValue(parentKeyPlusCurrentKey, newName);
+  const newKeyValue = flatten(value, renamedKey);
+  const newKeyValueType = checkVariableType(newKeyValue);
+  return assignOrAddValueToObject(newKeyValue, newKeyValueType, flattenedData, renamedKey);
+}
+
 function flatten(data, parentKey) {
   const keys = getCurrentJSONkeys(data);
-  let flattenedData = {};
+  let flattenedObject = {};
   if (!keys) {
     return data;
   }
   for (const key of keys) {
-    const keyValue = data[key];
-    const keyType = checkVariableType(keyValue);
-    const parentKeyPlusCurrentKey = renameKeyForFlattenedValue(parentKey, key);
-    if (keyType === 'object') {
-      const newKeyValue = flatten(keyValue, parentKeyPlusCurrentKey);
-      flattenedData = { ...flattenedData, ...newKeyValue };
+    const value = data[key];
+    const type = checkVariableType(value);
+    const parentAndCurrentKeyCombination = renameKeyForFlattenedValue(parentKey, key);
+    if (type === 'object') {
+      const newKeyValue = flatten(value, parentAndCurrentKeyCombination);
+      flattenedObject = { ...flattenedObject, ...newKeyValue };
     }
-    else if (keyType === 'array') {
-      for (let i = 0; i < keyValue.length; i++) {
-        const newName = '[' + i + ']';
-        const renamedKey = renameKeyForFlattenedValue(parentKeyPlusCurrentKey, newName);
-        const newKeyValue = flatten(keyValue[i], renamedKey);
-        const newKeyValueType = checkVariableType(newKeyValue);
-        flattenedData = assignOrAddValueToObject(newKeyValue, newKeyValueType, flattenedData, renamedKey);
+    else if (type === 'array') {
+      for (let i = 0; i < value.length; i++) {
+        flattenedObject = flatIndexOfArray(i, value[i], parentAndCurrentKeyCombination, flattenedObject);
       }
     }
     else {
-      flattenedData[parentKeyPlusCurrentKey] = keyValue;
+      flattenedObject[parentAndCurrentKeyCombination] = value;
     }
   }
-  return flattenedData;
+  return flattenedObject;
 }
 
 module.exports = {
@@ -79,5 +83,6 @@ module.exports = {
   renameKeyForFlattenedValue,
   flatten,
   arrayIndexRegexPattern,
-  assignOrAddValueToObject
+  assignOrAddValueToObject,
+  flatIndexOfArray
 };
