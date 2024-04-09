@@ -4,7 +4,8 @@ const {
   renameKeyForFlattenedValue,
   flatten,
   arrayIndexRegexPattern,
-  assignOrAddValueToObject
+  assignOrAddValueToObject,
+  flatIndexOfArray
 } = require('./index');
 
 const firstCaseNestedJSON = {
@@ -603,6 +604,18 @@ test('add array to original object with 0 keyToUseWith argument', () => {
   const typeofValue = 'array';
   const result = assignOrAddValueToObject(value, typeofValue, object, 0);
   expect(result).toStrictEqual(objectShouldBe);
+});
+
+/*
+Tests for flattening array
+*/
+
+test('flat index of array where value is number', () => {
+  const value = 1;
+  const parentKeyPlusCurrentKey = 'object.array';
+  const shouldBe = { "object.array[0]": 1 };
+  const result = flatIndexOfArray(index, value, parentKeyPlusCurrentKey, {});
+  expect(result).toStrictEqual(shouldBe);
 });
 
 /*
