@@ -3,9 +3,10 @@ const {
   checkVariableType,
   renameKeyForFlattenedValue,
   flatten,
-  arrayIndexRegexPattern,
+  matchArrayIndexRegexPattern,
   assignOrAddValueToObject,
-  flatIndexOfArray
+  flatIndexOfArray,
+  flatDifferentType
 } = require('./index');
 
 const firstCaseNestedJSON = {
@@ -504,7 +505,7 @@ Tests for array index regex pattern
 */
 
 test('get regex pattern for array index', () => {
-  const result = arrayIndexRegexPattern();
+  const result = matchArrayIndexRegexPattern();
   expect(result).toStrictEqual(/^\[\d+\]$/);
 });
 
@@ -612,25 +613,25 @@ Tests for flattening array
 
 test('flat index of array where value is number', () => {
   const value = 1;
-  const parentKeyPlusCurrentKey = 'object.array';
+  const parentAndCurrentKeyCombination = 'object.array';
   const shouldBe = { "object.array[0]": 1 };
-  const result = flatIndexOfArray(0, value, parentKeyPlusCurrentKey, {});
+  const result = flatIndexOfArray(0, value, parentAndCurrentKeyCombination, {});
   expect(result).toStrictEqual(shouldBe);
 });
 
 test('flat index of array where value is string', () => {
   const value = "string";
-  const parentKeyPlusCurrentKey = 'object.array';
+  const parentAndCurrentKeyCombination = 'object.array';
   const shouldBe = { "object.array[0]": "string" };
-  const result = flatIndexOfArray(0, value, parentKeyPlusCurrentKey, {});
+  const result = flatIndexOfArray(0, value, parentAndCurrentKeyCombination, {});
   expect(result).toStrictEqual(shouldBe);
 });
 
 test('flat index of array where value is array', () => {
   const value = [1, 2, 3];
-  const parentKeyPlusCurrentKey = 'object.array';
+  const parentAndCurrentKeyCombination = 'object.array';
   const shouldBe = { "object.array[0]": [1, 2, 3] };
-  const result = flatIndexOfArray(0, value, parentKeyPlusCurrentKey, {});
+  const result = flatIndexOfArray(0, value, parentAndCurrentKeyCombination, {});
   expect(result).toStrictEqual(shouldBe);
 });
 
@@ -640,7 +641,7 @@ test('flat index of array where value is object', () => {
     number: 1,
     string: 'string'
   };
-  const parentKeyPlusCurrentKey = 'object.array';
+  const parentAndCurrentKeyCombination = 'object.array';
   const shouldBe = {
     "object.array[0].array[0]": 1,
     "object.array[0].array[1]": 2,
@@ -648,7 +649,30 @@ test('flat index of array where value is object', () => {
     "object.array[0].number": 1,
     "object.array[0].string": 'string'
   };
-  const result = flatIndexOfArray(0, value, parentKeyPlusCurrentKey, {});
+  const result = flatIndexOfArray(0, value, parentAndCurrentKeyCombination, {});
+  expect(result).toStrictEqual(shouldBe);
+});
+
+/*
+Tests for flattening different type of value
+*/
+
+test('flat object value', () => {
+  const value = {
+    array: [1, 2, 3],
+    number: 1,
+    string: 'string'
+  };
+  const type = 'object';
+  const parentAndCurrentKeyCombination = 'object';
+  const shouldBe = {
+    "object.array[0]": 1,
+    "object.array[1]": 2,
+    "object.array[2]": 3,
+    "object.number": 1,
+    "object.string": 'string'
+  };
+  const result = flatDifferentType(value, type, parentAndCurrentKeyCombination, {});
   expect(result).toStrictEqual(shouldBe);
 });
 
