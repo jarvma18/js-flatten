@@ -15,7 +15,7 @@ function checkVariableType(value) {
   return typeof value;
 }
 
-function arrayIndexRegexPattern() {
+function matchArrayIndexRegexPattern() {
   return new RegExp(/^\[\d+\]$/);
 }
 
@@ -23,7 +23,7 @@ function renameKeyForFlattenedValue(parentKey, currentKey) {
   if (!parentKey) {
     return currentKey;
   }
-  const result = currentKey.match(arrayIndexRegexPattern());
+  const result = currentKey.match(matchArrayIndexRegexPattern());
   if (result) {
     return parentKey + currentKey;
   }
@@ -43,12 +43,28 @@ function assignOrAddValueToObject(value, typeofValue, object, keyToUseWithAdd) {
   return object;
 }
 
-function flatIndexOfArray(index, value, parentKeyPlusCurrentKey, flattenedData){
+function flatIndexOfArray(index, value, parentKeyPlusCurrentKey, flattenedObject){
   const newName = '[' + index + ']';
   const renamedKey = renameKeyForFlattenedValue(parentKeyPlusCurrentKey, newName);
   const newKeyValue = flatten(value, renamedKey);
   const newKeyValueType = checkVariableType(newKeyValue);
-  return assignOrAddValueToObject(newKeyValue, newKeyValueType, flattenedData, renamedKey);
+  return assignOrAddValueToObject(newKeyValue, newKeyValueType, flattenedObject, renamedKey);
+}
+
+function flatDifferentType(value, type, parentAndCurrentKeyCombination, flattenedObject) {
+  if (type === 'object') {
+    const newKeyValue = flatten(value, parentAndCurrentKeyCombination);
+    flattenedObject = { ...flattenedObject, ...newKeyValue };
+  }
+  else if (type === 'array') {
+    for (let i = 0; i < value.length; i++) {
+      flattenedObject = flatIndexOfArray(i, value[i], parentAndCurrentKeyCombination, flattenedObject);
+    }
+  }
+  else {
+    flattenedObject[parentAndCurrentKeyCombination] = value;
+  }
+  return flattenedObject;
 }
 
 function flatten(data, parentKey) {
@@ -61,18 +77,7 @@ function flatten(data, parentKey) {
     const value = data[key];
     const type = checkVariableType(value);
     const parentAndCurrentKeyCombination = renameKeyForFlattenedValue(parentKey, key);
-    if (type === 'object') {
-      const newKeyValue = flatten(value, parentAndCurrentKeyCombination);
-      flattenedObject = { ...flattenedObject, ...newKeyValue };
-    }
-    else if (type === 'array') {
-      for (let i = 0; i < value.length; i++) {
-        flattenedObject = flatIndexOfArray(i, value[i], parentAndCurrentKeyCombination, flattenedObject);
-      }
-    }
-    else {
-      flattenedObject[parentAndCurrentKeyCombination] = value;
-    }
+    flattenedObject = flatDifferentType(value, type, parentAndCurrentKeyCombination, flattenedObject);
   }
   return flattenedObject;
 }
@@ -82,7 +87,8 @@ module.exports = {
   checkVariableType,
   renameKeyForFlattenedValue,
   flatten,
-  arrayIndexRegexPattern,
+  matchArrayIndexRegexPattern,
   assignOrAddValueToObject,
-  flatIndexOfArray
+  flatIndexOfArray,
+  flatDifferentType
 };
