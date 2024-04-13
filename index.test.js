@@ -6,7 +6,8 @@ const {
   matchArrayIndexRegexPattern,
   assignOrAddValueToObject,
   flatIndexOfArray,
-  flatDifferentType
+  flatDifferentType,
+  changeValueToStringAndTrimWhiteSpace
 } = require('./index');
 
 const firstCaseNestedJSON = {
@@ -772,6 +773,34 @@ test('flat object value', () => {
   };
   const result = flatDifferentType(value, type, parentAndCurrentKeyCombination, {});
   expect(result).toStrictEqual(shouldBe);
+});
+
+/*
+Tests for changeValueToStringAndTrimWhiteSpace
+*/
+
+test('change value to string and trim white spaces case 1', () => {
+  const value = '.';
+  const result = changeValueToStringAndTrimWhiteSpace(value);
+  expect(result).toStrictEqual('.');
+});
+
+test('change value to string and trim white spaces case 2', () => {
+  const value = ' ';
+  const result = changeValueToStringAndTrimWhiteSpace(value);
+  expect(result).toStrictEqual('');
+});
+
+test('change value to string and trim white spaces case 3', () => {
+  const value = ' . ';
+  const result = changeValueToStringAndTrimWhiteSpace(value);
+  expect(result).toStrictEqual('.');
+});
+
+test('change value to string and trim white spaces case 3', () => {
+  const value = 1;
+  const result = changeValueToStringAndTrimWhiteSpace(value);
+  expect(result).toStrictEqual('1');
 });
 
 /*
