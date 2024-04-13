@@ -4,9 +4,12 @@ js-flatten is utility designed to flatten nested JSON structures. Nested JSON ca
 
 Features include:
 * Recursive flattening √
-* Customizable separators
-* Efficient and lightweight
-* Easy integration
+* Customizable separators √
+* Efficient and lightweight √
+* Easy integration √
+
+In the future:
+* Deflatten feature
 
 I practiced TDD with this small project.
 
@@ -23,7 +26,16 @@ npm install
 
 ### Run
 ```
-node index.js
+# Create new file for example. main.js
+# Require flatten function from index.js
+# Use flatten like this:
+
+flatten(data, separator, parentKey)
+
+# data = object to be flattened
+# separator = what separator to use when combining nested objects to one key
+# parentKey = leave this null if you don't want that the main flattened object has prefix key
+
 ```
 
 ### Run tests
