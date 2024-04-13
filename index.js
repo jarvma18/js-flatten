@@ -19,7 +19,8 @@ function matchArrayIndexRegexPattern() {
   return new RegExp(/^\[\d+\]$/);
 }
 
-function renameKeyForFlattenedValue(parentKey, currentKey) {
+function renameKeyForFlattenedValue(parentKey, currentKey, separator) {
+  separator = separator.toString().trim();
   if (!parentKey) {
     return currentKey;
   }
@@ -27,7 +28,7 @@ function renameKeyForFlattenedValue(parentKey, currentKey) {
   if (result) {
     return parentKey + currentKey;
   }
-  return parentKey + '.' + currentKey;
+  return parentKey + separator + currentKey;
 }
 
 function assignOrAddValueToObject(value, typeofValue, object, keyToUseWithAdd) {
@@ -43,22 +44,22 @@ function assignOrAddValueToObject(value, typeofValue, object, keyToUseWithAdd) {
   return object;
 }
 
-function flatIndexOfArray(index, value, parentKeyPlusCurrentKey, flattenedObject){
+function flatIndexOfArray(index, value, parentKeyPlusCurrentKey, flattenedObject, separator){
   const newName = '[' + index + ']';
-  const renamedKey = renameKeyForFlattenedValue(parentKeyPlusCurrentKey, newName);
-  const newKeyValue = flatten(value, renamedKey);
+  const renamedKey = renameKeyForFlattenedValue(parentKeyPlusCurrentKey, newName, separator);
+  const newKeyValue = flatten(value, separator, renamedKey);
   const newKeyValueType = checkVariableType(newKeyValue);
   return assignOrAddValueToObject(newKeyValue, newKeyValueType, flattenedObject, renamedKey);
 }
 
-function flatDifferentType(value, type, parentAndCurrentKeyCombination, flattenedObject) {
+function flatDifferentType(value, type, parentAndCurrentKeyCombination, flattenedObject, separator) {
   if (type === 'object') {
-    const newKeyValue = flatten(value, parentAndCurrentKeyCombination);
+    const newKeyValue = flatten(value, separator, parentAndCurrentKeyCombination);
     flattenedObject = { ...flattenedObject, ...newKeyValue };
   }
   else if (type === 'array') {
     for (let i = 0; i < value.length; i++) {
-      flattenedObject = flatIndexOfArray(i, value[i], parentAndCurrentKeyCombination, flattenedObject);
+      flattenedObject = flatIndexOfArray(i, value[i], parentAndCurrentKeyCombination, flattenedObject, separator);
     }
   }
   else {
@@ -67,7 +68,7 @@ function flatDifferentType(value, type, parentAndCurrentKeyCombination, flattene
   return flattenedObject;
 }
 
-function flatten(data, parentKey) {
+function flatten(data, separator = '.', parentKey) {
   const keys = getCurrentJSONkeys(data);
   let flattenedObject = {};
   if (!keys) {
@@ -76,8 +77,8 @@ function flatten(data, parentKey) {
   for (const key of keys) {
     const value = data[key];
     const type = checkVariableType(value);
-    const parentAndCurrentKeyCombination = renameKeyForFlattenedValue(parentKey, key);
-    flattenedObject = flatDifferentType(value, type, parentAndCurrentKeyCombination, flattenedObject);
+    const parentAndCurrentKeyCombination = renameKeyForFlattenedValue(parentKey, key, separator);
+    flattenedObject = flatDifferentType(value, type, parentAndCurrentKeyCombination, flattenedObject, separator);
   }
   return flattenedObject;
 }
