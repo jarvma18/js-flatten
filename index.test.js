@@ -123,6 +123,90 @@ const flattenedFirstCaseJSON = {
   "cars[1].owners[0].address.zip": "12345"
 };
 
+const flattenedFirstCaseJSONLineSeparator = {
+  "cars[0]-make": "Toyota",
+  "cars[0]-model": "Camry",
+  "cars[0]-year": 2022,
+  "cars[0]-features-interior[0]": "leather seats",
+  "cars[0]-features-interior[1]": "touchscreen infotainment",
+  "cars[0]-features-exterior-color": "blue",
+  "cars[0]-features-exterior-wheels": "alloy",
+  "cars[0]-features-exterior-lights[0]": "LED headlights",
+  "cars[0]-features-exterior-lights[1]": "fog lights",
+  "cars[0]-engine-type": "V6",
+  "cars[0]-engine-horsepower": 301,
+  "cars[0]-engine-fuel": "gasoline",
+  "cars[0]-owners[0]-name": "Alice",
+  "cars[0]-owners[0]-age": 35,
+  "cars[0]-owners[0]-address-street": "123 Main St",
+  "cars[0]-owners[0]-address-city": "Carville",
+  "cars[0]-owners[0]-address-zip": "98765",
+  "cars[0]-owners[1]-name": "Bob",
+  "cars[0]-owners[1]-age": 42,
+  "cars[0]-owners[1]-address-street": "456 Elm Ave",
+  "cars[0]-owners[1]-address-city": "Auto City",
+  "cars[0]-owners[1]-address-zip": "54321",
+  "cars[1]-make": "Tesla",
+  "cars[1]-model": "Model 3",
+  "cars[1]-year": 2023,
+  "cars[1]-features-interior[0]": "premium sound system",
+  "cars[1]-features-interior[1]": "autopilot",
+  "cars[1]-features-exterior-color": "white",
+  "cars[1]-features-exterior-wheels": "aero",
+  "cars[1]-features-exterior-lights[0]": "LED headlights",
+  "cars[1]-features-exterior-lights[1]": "taillights",
+  "cars[1]-engine-type": "electric",
+  "cars[1]-engine-horsepower": 450,
+  "cars[1]-engine-fuel": "electricity",
+  "cars[1]-owners[0]-name": "Charlie",
+  "cars[1]-owners[0]-age": 28,
+  "cars[1]-owners[0]-address-street": "789 Electric Dr",
+  "cars[1]-owners[0]-address-city": "Eco Town",
+  "cars[1]-owners[0]-address-zip": "12345"
+};
+
+const flattenedFirstCaseJSONSpaceSeparator = {
+  "cars[0]make": "Toyota",
+  "cars[0]model": "Camry",
+  "cars[0]year": 2022,
+  "cars[0]featuresinterior[0]": "leather seats",
+  "cars[0]featuresinterior[1]": "touchscreen infotainment",
+  "cars[0]featuresexteriorcolor": "blue",
+  "cars[0]featuresexteriorwheels": "alloy",
+  "cars[0]featuresexteriorlights[0]": "LED headlights",
+  "cars[0]featuresexteriorlights[1]": "fog lights",
+  "cars[0]enginetype": "V6",
+  "cars[0]enginehorsepower": 301,
+  "cars[0]enginefuel": "gasoline",
+  "cars[0]owners[0]name": "Alice",
+  "cars[0]owners[0]age": 35,
+  "cars[0]owners[0]addressstreet": "123 Main St",
+  "cars[0]owners[0]addresscity": "Carville",
+  "cars[0]owners[0]addresszip": "98765",
+  "cars[0]owners[1]name": "Bob",
+  "cars[0]owners[1]age": 42,
+  "cars[0]owners[1]addressstreet": "456 Elm Ave",
+  "cars[0]owners[1]addresscity": "Auto City",
+  "cars[0]owners[1]addresszip": "54321",
+  "cars[1]make": "Tesla",
+  "cars[1]model": "Model 3",
+  "cars[1]year": 2023,
+  "cars[1]featuresinterior[0]": "premium sound system",
+  "cars[1]featuresinterior[1]": "autopilot",
+  "cars[1]featuresexteriorcolor": "white",
+  "cars[1]featuresexteriorwheels": "aero",
+  "cars[1]featuresexteriorlights[0]": "LED headlights",
+  "cars[1]featuresexteriorlights[1]": "taillights",
+  "cars[1]enginetype": "electric",
+  "cars[1]enginehorsepower": 450,
+  "cars[1]enginefuel": "electricity",
+  "cars[1]owners[0]name": "Charlie",
+  "cars[1]owners[0]age": 28,
+  "cars[1]owners[0]addressstreet": "789 Electric Dr",
+  "cars[1]owners[0]addresscity": "Eco Town",
+  "cars[1]owners[0]addresszip": "12345"
+};
+
 const secondCaseNestedJSON = {
   make: 'Toyota',
   model: 'Camry',
@@ -489,14 +573,28 @@ Tests for new flattened key
 test('new key for flattened object case 1', () => {
   parentKey = 'parentKey';
   currentKey = 'currentKey';
-  const result = renameKeyForFlattenedValue(parentKey, currentKey);
+  const result = renameKeyForFlattenedValue(parentKey, currentKey, '.');
   expect(result).toBe('parentKey.currentKey');
 });
 
 test('new key for flattened object case 2', () => {
   parentKey = 'parentKey';
   currentKey = '[0]';
-  const result = renameKeyForFlattenedValue(parentKey, currentKey);
+  const result = renameKeyForFlattenedValue(parentKey, currentKey, '.');
+  expect(result).toBe('parentKey[0]');
+});
+
+test('new key for flattened object case - as separator', () => {
+  parentKey = 'parentKey';
+  currentKey = '[0]';
+  const result = renameKeyForFlattenedValue(parentKey, currentKey, '-');
+  expect(result).toBe('parentKey[0]');
+});
+
+test('new key for flattened object case space as separator', () => {
+  parentKey = 'parentKey';
+  currentKey = '[0]';
+  const result = renameKeyForFlattenedValue(parentKey, currentKey, ' ');
   expect(result).toBe('parentKey[0]');
 });
 
@@ -615,7 +713,7 @@ test('flat index of array where value is number', () => {
   const value = 1;
   const parentAndCurrentKeyCombination = 'object.array';
   const shouldBe = { "object.array[0]": 1 };
-  const result = flatIndexOfArray(0, value, parentAndCurrentKeyCombination, {});
+  const result = flatIndexOfArray(0, value, parentAndCurrentKeyCombination, {}, '.');
   expect(result).toStrictEqual(shouldBe);
 });
 
@@ -623,7 +721,7 @@ test('flat index of array where value is string', () => {
   const value = "string";
   const parentAndCurrentKeyCombination = 'object.array';
   const shouldBe = { "object.array[0]": "string" };
-  const result = flatIndexOfArray(0, value, parentAndCurrentKeyCombination, {});
+  const result = flatIndexOfArray(0, value, parentAndCurrentKeyCombination, {}, '.');
   expect(result).toStrictEqual(shouldBe);
 });
 
@@ -631,7 +729,7 @@ test('flat index of array where value is array', () => {
   const value = [1, 2, 3];
   const parentAndCurrentKeyCombination = 'object.array';
   const shouldBe = { "object.array[0]": [1, 2, 3] };
-  const result = flatIndexOfArray(0, value, parentAndCurrentKeyCombination, {});
+  const result = flatIndexOfArray(0, value, parentAndCurrentKeyCombination, {}, '.');
   expect(result).toStrictEqual(shouldBe);
 });
 
@@ -649,7 +747,7 @@ test('flat index of array where value is object', () => {
     "object.array[0].number": 1,
     "object.array[0].string": 'string'
   };
-  const result = flatIndexOfArray(0, value, parentAndCurrentKeyCombination, {});
+  const result = flatIndexOfArray(0, value, parentAndCurrentKeyCombination, {}, '.');
   expect(result).toStrictEqual(shouldBe);
 });
 
@@ -683,17 +781,29 @@ Tests for flattening
 test('flatten firstCaseNestedJson', () => {
   const value = firstCaseNestedJSON;
   const result = flatten(value);
-  expect(result).toStrictEqual(flattenedFirstCaseJSON, null);
+  expect(result).toStrictEqual(flattenedFirstCaseJSON);
 });
 
 test('flatten secondCaseNestedJson', () => {
   const value = secondCaseNestedJSON;
   const result = flatten(value);
-  expect(result).toStrictEqual(flattenedSecondCaseJSON, null);
+  expect(result).toStrictEqual(flattenedSecondCaseJSON);
 });
 
 test('flatten thirdCaseNestedJson', () => {
   const value = thirdCaseNestedJSON;
   const result = flatten(value);
-  expect(result).toStrictEqual(flattenedThirdCaseJSON, null);
+  expect(result).toStrictEqual(flattenedThirdCaseJSON);
+});
+
+test('flatten firstCaseNestedJson', () => {
+  const value = firstCaseNestedJSON;
+  const result = flatten(value, '-');
+  expect(result).toStrictEqual(flattenedFirstCaseJSONLineSeparator);
+});
+
+test('flatten firstCaseNestedJson', () => {
+  const value = firstCaseNestedJSON;
+  const result = flatten(value, ' ');
+  expect(result).toStrictEqual(flattenedFirstCaseJSONSpaceSeparator);
 });
