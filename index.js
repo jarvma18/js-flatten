@@ -19,8 +19,12 @@ function matchArrayIndexRegexPattern() {
   return new RegExp(/^\[\d+\]$/);
 }
 
+function changeValueToStringAndTrimWhiteSpace(value) {
+  return value.toString().trim();
+}
+
 function renameKeyForFlattenedValue(parentKey, currentKey, separator) {
-  separator = separator.toString().trim();
+  separator = changeValueToStringAndTrimWhiteSpace(separator);
   if (!parentKey) {
     return currentKey;
   }
@@ -91,5 +95,6 @@ module.exports = {
   matchArrayIndexRegexPattern,
   assignOrAddValueToObject,
   flatIndexOfArray,
-  flatDifferentType
+  flatDifferentType,
+  changeValueToStringAndTrimWhiteSpace
 };
